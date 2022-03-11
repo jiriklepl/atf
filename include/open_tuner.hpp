@@ -10,6 +10,8 @@
 #include "search_technique.hpp"
 #include "helper.hpp"
 
+namespace atf {
+
 class open_tuner : public atf::search_technique {
   public:
     void initialize(size_t dimensionality) override {
@@ -130,7 +132,7 @@ api = TuningRunManager(interface, args)
       return { indices };
 
     }
-    void report_costs(const std::map<atf::coordinates, cost>& costs) override {
+    void report_costs(const std::map<atf::coordinates, atf::cost_t>& costs) override {
       PyObject* arg = PyTuple_New( 1 );
       PyTuple_SetItem( arg, 0, PyFloat_FromDouble( costs.begin()->second ) );
 
@@ -144,5 +146,7 @@ api = TuningRunManager(interface, args)
     PyObject* _report_result;
     PyObject* _finish;
 };
+
+}
 
 #endif //OPEN_TUNER_HPP

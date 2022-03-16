@@ -14,6 +14,12 @@ namespace atf {
 
 class open_tuner : public atf::search_technique {
   public:
+    open_tuner& database( const std::string& path ) {
+      _path_to_database = path;
+      return *this;
+    }
+
+
     void initialize(size_t dimensionality) override {
       _dimensionality = dimensionality;
       std::string python_code = R"(
@@ -75,8 +81,14 @@ api = TuningRunManager(interface, args)
 
       opentuner_cmd_line_arguments.emplace_back("python_template.py" ); // python program name
       opentuner_cmd_line_arguments.emplace_back("--no-dups"          ); // supresses printing warnings for duplicate requests'
+      if ( !_path_to_database.empty() )
+      {
+          opentuner_cmd_line_arguments.push_back( "--database"      );   // path to OpenTuner database
+          opentuner_cmd_line_arguments.push_back( _path_to_database );
+      }
 
-      // convert vector of std::string to vector of char*
+
+        // convert vector of std::string to vector of char*
       std::vector< char* > opentuner_cmd_line_arguments_as_c_str;
       auto str_to_char = []( const std::string& str ){ char* c_str = new char[ str.size() + 1 ];
         std::strcpy( c_str, str.c_str() );
@@ -141,6 +153,8 @@ api = TuningRunManager(interface, args)
       Py_DECREF(arg);
     }
   private:
+    std::string _path_to_database;
+
     size_t    _dimensionality;
     PyObject* _get_next_desired_result;
     PyObject* _report_result;

@@ -37,6 +37,12 @@
 
 namespace atf {
 
+// helper for converting interface classes to ATF's internal classes
+template<typename T>
+auto to_internal_type(T& type) {
+    return type;
+}
+
 // abort conditions
 using evaluations = cond::evaluations;
 using valid_evaluations = cond::valid_evaluations;
@@ -49,7 +55,7 @@ using cost = cond::result;
 class tuner {
   public:
     tuner() = default;
-    tuner(const tuner& other) : _engine(other._engine), _is_stepping(false), _stepping_config(), _stepping_start(), _stepping_log() {}
+    tuner(const tuner& other) : _engine(other._engine), _is_stepping(false), _stepping_config(), _stepping_start(), _stepping_log(), _log_file(other._log_file) {}
     ~tuner() {
       if (_is_stepping) {
         _engine.finalize();
@@ -104,7 +110,7 @@ class tuner {
       if (_is_stepping)
         throw std::runtime_error("cannot start tuning while using online tuning");
       _engine.set_abort_condition(abort_condition);
-      auto internal_cf = cf.to_internal_type();
+      auto internal_cf = to_internal_type(cf);
       return _engine(internal_cf);
     }
 
@@ -113,7 +119,7 @@ class tuner {
       if (_is_stepping)
         throw std::runtime_error("cannot start tuning while using online tuning");
       _engine.set_abort_condition();
-      auto internal_cf = cf.to_internal_type();
+        auto internal_cf = to_internal_type(cf);
       return _engine(internal_cf);
     }
 
@@ -178,10 +184,12 @@ class tuner {
     }
 
     template<typename cf_t>
-    void make_step(cf_t& cf) {
+    cost_t make_step(cf_t& cf) {
         auto config = get_configuration();
-        auto cost = cf(config);
+        auto internal_cf = to_internal_type(cf);
+        auto cost = internal_cf(config);
         report_cost(cost);
+        return cost;
     }
 
     const tuning_status& get_tuning_status() {
@@ -372,6 +380,11 @@ auto cost_function(const std::string &run_script) {
 }
 
 };
+
+template<>
+auto to_internal_type(generic::cost_function_class& type) {
+    return type.to_internal_type();
+}
 
 #ifdef ENABLE_OPENCL_COST_FUNCTION
 namespace opencl {
@@ -567,6 +580,11 @@ auto max_work_group_size(size_t platform_id = 0, size_t device_id = 0) {
 }
 
 };
+
+template<typename... Ts>
+auto to_internal_type(opencl::cost_function_class<Ts...>& type) {
+    return type.to_internal_type();
+}
 #endif
 
 #ifdef ENABLE_CUDA_COST_FUNCTION
@@ -717,6 +735,11 @@ auto cost_function(const kernel<Ts...> &kernel) {
 }
 
 };
+
+template<typename... Ts>
+auto to_internal_type(cuda::cost_function_class<Ts...>& type) {
+    return type.to_internal_type();
+}
 #endif
 
 };

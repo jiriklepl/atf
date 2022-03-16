@@ -84,7 +84,8 @@ public:
 #ifdef PARALLEL_SEARCH_SPACE_GENERATION
       _threads(),
 #endif
-      _status( other._status )
+      _status( other._status ),
+      _log_file( other._log_file )
     {}
 
     exploration_engine(exploration_engine&& other )       :
@@ -100,7 +101,8 @@ public:
 #ifdef PARALLEL_SEARCH_SPACE_GENERATION
       _threads(),
 #endif
-      _status( other._status )
+      _status( other._status ),
+      _log_file( other._log_file )
     {}
 
   

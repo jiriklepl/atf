@@ -37,6 +37,7 @@ auto nvrtc_safe_call(nvrtcResult p_result, const ::std::string& p_message)
 {
   if(p_result != NVRTC_SUCCESS)
   {
+    std::cout << nvrtcGetErrorString(p_result) << ": " << p_message << std::endl;
     throw T{p_message};
     ::std::exit(EXIT_FAILURE);
   }
@@ -49,6 +50,7 @@ auto cuda_safe_call(cudaError_t p_result, const ::std::string& p_message)
 {
   if(p_result != cudaSuccess)
   {
+    std::cout << cudaGetErrorString(p_result) << ": " << p_message << std::endl;
     throw T{p_message};
     ::std::exit(EXIT_FAILURE);
   }
@@ -60,6 +62,9 @@ auto cuda_safe_call(CUresult p_result, const ::std::string& p_message)
 {
   if(p_result != CUDA_SUCCESS)
   {
+    const char* error;
+    cuGetErrorName(p_result, &error);
+    std::cout << error << ": " << p_message << std::endl;
     throw T{p_message};
     ::std::exit(EXIT_FAILURE);
   }
@@ -194,8 +199,11 @@ class cuda_wrapper
         );
 
         // Check for success
-        if(t_kernelResult != CUDA_SUCCESS)
-          throw ::std::exception();
+        if(t_kernelResult != CUDA_SUCCESS) {
+          const char* error;
+          cuda_safe_call<>(cuGetErrorName(t_kernelResult, &error), "failed to retrieve kernel error");
+          throw ::std::runtime_error(error);
+        }
       }
 
       // evaluations
@@ -224,8 +232,11 @@ class cuda_wrapper
         cuda_safe_call<>(cudaEventRecord(t_stop, 0), "Failed to record stop event");
 
         // Check for success
-        if(t_kernelResult != CUDA_SUCCESS)
-          throw ::std::exception();
+        if(t_kernelResult != CUDA_SUCCESS) {
+          const char* error;
+          cuda_safe_call<>(cuGetErrorName(t_kernelResult, &error), "failed to retrieve kernel error");
+          throw ::std::runtime_error(error);
+        }
 
         // Profiling
         float tmp = 0.f;

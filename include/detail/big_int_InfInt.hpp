@@ -29,7 +29,7 @@ big_int operator/(const ::atf::big_int& lhs, const ::atf::big_int& rhs) {
 }
 big_int operator%(const ::atf::big_int& lhs, const ::atf::big_int& rhs) {
   try {
-    return {lhs._backend / rhs._backend};
+    return {lhs._backend % rhs._backend};
   } catch (const InfIntException& e) {
     throw big_int_exception(e.what());
   }

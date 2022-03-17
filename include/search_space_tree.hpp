@@ -159,7 +159,7 @@ class search_space_tree : public search_space
       for( int tree_id = static_cast<int>( _trees.size() ) - 1 ; tree_id >= 0 ; --tree_id )
       {
         const auto& tree = _trees[ tree_id ];
-        
+
         // select leaf
         big_int num_configs_of_lower_trees = 1;
         for( int lower_tree = tree_id + 1; lower_tree < _trees.size() ; ++lower_tree )

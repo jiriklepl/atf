@@ -34,6 +34,7 @@
 #include "include/bash_cf.hpp"
 
 #include <cstdlib>
+#include <cstring>
 
 namespace atf {
 
@@ -335,6 +336,10 @@ class cost_function_class {
         for (auto &tp : configuration) {
           ss << tp.first << "=" << tp.second << " ";
         }
+
+        std::cout << ss.str();
+
+        std::cout << ss.str();
 
         // execute compile script if defined
         if (!_compile_script.empty()) {

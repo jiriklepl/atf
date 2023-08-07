@@ -349,7 +349,7 @@ std::string timestamp_str() {
   using namespace std::chrono;
 
   // get current time
-  auto now = high_resolution_clock::now();
+  auto now = system_clock::now();
 
   // get number of milliseconds for the current second
   // (remainder after division into seconds)

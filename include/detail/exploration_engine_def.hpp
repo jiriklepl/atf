@@ -68,7 +68,7 @@ tuning_status exploration_engine::operator()(callable& program ) // func must ta
   csv_file.open(_log_file, std::ofstream::out | std::ofstream::trunc);
   csv_file.precision(std::numeric_limits<cost_t>::max_digits10);
  
-  auto start = std::chrono::system_clock::now();
+  auto start = std::chrono::steady_clock::now();
 
   initialize();
   
@@ -76,13 +76,13 @@ tuning_status exploration_engine::operator()(callable& program ) // func must ta
   size_t get_next_config_ms, cost_function_ms, report_cost_ms;
   while( !_abort_condition->stop( _status ) )
   {
-    auto get_next_config_start = std::chrono::high_resolution_clock::now();
+    auto get_next_config_start = std::chrono::steady_clock::now();
     auto config = get_next_config();
-    auto get_next_config_end = std::chrono::high_resolution_clock::now();
+    auto get_next_config_end = std::chrono::steady_clock::now();
     get_next_config_ms = std::chrono::duration_cast<std::chrono::milliseconds>(get_next_config_end - get_next_config_start).count();
 
     ++_status._number_of_evaluated_configs;
-    auto cost_function_start = std::chrono::high_resolution_clock::now();
+    auto cost_function_start = std::chrono::steady_clock::now();
     try
     {
       program_runtime = program( config );
@@ -96,7 +96,7 @@ tuning_status exploration_engine::operator()(callable& program ) // func must ta
       else
         program_runtime = std::numeric_limits<cost_t>::max();
     }
-    auto cost_function_end = std::chrono::high_resolution_clock::now();
+    auto cost_function_end = std::chrono::steady_clock::now();
     cost_function_ms = std::chrono::duration_cast<std::chrono::milliseconds>(cost_function_end - cost_function_start).count();
     
     auto current_best_result = std::get<2>( _status._history.back() );
@@ -104,15 +104,15 @@ tuning_status exploration_engine::operator()(callable& program ) // func must ta
     {
       _status._evaluations_required_to_find_best_found_result = _status._number_of_evaluated_configs;
       _status._valid_evaluations_required_to_find_best_found_result = _status.number_of_valid_configs();
-      _status._history.emplace_back( std::chrono::high_resolution_clock::now(),
+      _status._history.emplace_back( std::chrono::steady_clock::now(),
                              config,
                              program_runtime
                            );
     }
 
-    auto report_cost_start = std::chrono::high_resolution_clock::now();
+    auto report_cost_start = std::chrono::steady_clock::now();
     report_result( program_runtime );
-    auto report_cost_end = std::chrono::high_resolution_clock::now();
+    auto report_cost_end = std::chrono::steady_clock::now();
     report_cost_ms = std::chrono::duration_cast<std::chrono::milliseconds>(report_cost_end - report_cost_start).count();
 
     if (write_header) {
@@ -145,7 +145,7 @@ tuning_status exploration_engine::operator()(callable& program ) // func must ta
   if (!_silent)
     std::cout << "\nnumber of evaluated configs: " << _status._number_of_evaluated_configs << " , number of valid configs: " << _status.number_of_valid_configs() << " , number of invalid configs: " << _status._number_of_invalid_configs << " , evaluations required to find best found result: " << _status._evaluations_required_to_find_best_found_result << " , valid evaluations required to find best found result: " << _status._valid_evaluations_required_to_find_best_found_result << std::endl;
 
-  auto end = std::chrono::system_clock::now();
+  auto end = std::chrono::steady_clock::now();
   auto runtime_in_sec = std::chrono::duration_cast<std::chrono::seconds>( end - start ).count();
   if (!_silent)
     std::cout << std::endl << "total runtime for tuning = " << runtime_in_sec << "sec" << std::endl;

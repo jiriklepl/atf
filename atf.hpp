@@ -60,7 +60,7 @@ class tuner {
       if (_is_stepping) {
         _engine.finalize();
         if (!_engine._silent) {
-          auto end = std::chrono::system_clock::now();
+          auto end = std::chrono::steady_clock::now();
           auto runtime_in_sec = std::chrono::duration_cast<std::chrono::seconds>( end - _stepping_start ).count();
           std::cout << "\nnumber of evaluated configs: " << _engine._status._number_of_evaluated_configs << " , evaluations required to find best found result: " << _engine._status._evaluations_required_to_find_best_found_result << std::endl;
           std::cout << std::endl << "total runtime for tuning = " << runtime_in_sec << "sec" << std::endl;
@@ -134,7 +134,7 @@ class tuner {
         _stepping_log.precision(std::numeric_limits<cost_t>::max_digits10);
         _stepping_log << "timestamp;cost";
         write_header = true;
-        _stepping_start = std::chrono::system_clock::now();
+        _stepping_start = std::chrono::steady_clock::now();
         _is_stepping = true;
         _stepping_expects_report_cost = false;
         _engine.initialize();
@@ -174,7 +174,7 @@ class tuner {
       auto current_best_result = std::get<2>( _engine._status._history.back() );
       if (cost < current_best_result) {
         _engine._status._evaluations_required_to_find_best_found_result = _engine._status._number_of_evaluated_configs;
-        _engine._status._history.emplace_back( std::chrono::high_resolution_clock::now(),
+        _engine._status._history.emplace_back( std::chrono::steady_clock::now(),
                                                _stepping_config,
                                                cost
         );
@@ -206,7 +206,7 @@ class tuner {
     bool                                       _is_stepping = false;
     bool                                       _stepping_expects_report_cost;
     configuration                              _stepping_config;
-    decltype(std::chrono::system_clock::now()) _stepping_start;
+    decltype(std::chrono::steady_clock::now()) _stepping_start;
     std::ofstream                              _stepping_log;
 };
 
@@ -345,9 +345,9 @@ class cost_function_class {
         }
 
         // execute run script
-        auto start = std::chrono::high_resolution_clock::now();
+        auto start = std::chrono::steady_clock::now();
         auto ret = system((ss.str() + _run_script).c_str());
-        auto end = std::chrono::high_resolution_clock::now();
+        auto end = std::chrono::steady_clock::now();
         if (ret != 0) {
           throw std::exception();
         }

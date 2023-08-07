@@ -273,11 +273,11 @@ class ocl_cf_class
       // compile kernel
       try
       {
-        auto start = std::chrono::system_clock::now();
+        auto start = std::chrono::steady_clock::now();
 
         _program.build( std::vector<cl::Device>( 1, _device ), flags.str().c_str() );
 
-        auto end = std::chrono::system_clock::now();
+        auto end = std::chrono::steady_clock::now();
         auto runtime_in_sec = std::chrono::duration_cast<std::chrono::milliseconds>( end - start ).count();
       }
       catch( cl::Error& err )
@@ -387,7 +387,7 @@ class ocl_cf_class
     template< typename T, typename... ARGs >
     void create_buffers_impl( const data::buffer_class<T>& buffer, ARGs&... args )
     {
-      auto start_time = std::chrono::system_clock::now();
+      auto start_time = std::chrono::steady_clock::now();
 
       // add buffer size to _kernel_input_sizes
       _kernel_input_sizes.emplace_back( buffer.size() );
@@ -395,7 +395,7 @@ class ocl_cf_class
       // create buffer
       _kernel_buffers.emplace_back( _context, CL_MEM_READ_WRITE, buffer.size() * sizeof( T ) );
 
-      auto end_time = std::chrono::system_clock::now();
+      auto end_time = std::chrono::steady_clock::now();
       auto runtime  = std::chrono::duration_cast<std::chrono::milliseconds>( end_time - start_time ).count();
       std::cout << "Time to create OpenCL device buffer: " << runtime << "ms" << std::endl;
 
@@ -427,7 +427,7 @@ class ocl_cf_class
     {
       if (buffer.copy_once() == init) {
 
-        auto start_time = std::chrono::system_clock::now();
+        auto start_time = std::chrono::steady_clock::now();
 
         try
         {
@@ -439,7 +439,7 @@ class ocl_cf_class
           abort();
         }
 
-        auto end_time = std::chrono::system_clock::now();
+        auto end_time = std::chrono::steady_clock::now();
         auto runtime  = std::chrono::duration_cast<std::chrono::milliseconds>( end_time - start_time ).count();
         if (init)
           std::cout << "Time to fill OpenCL device buffer: " << runtime << "ms" << std::endl;

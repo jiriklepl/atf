@@ -46,7 +46,7 @@ private:
     size_t                                      _number_of_invalid_configs;
     size_t                                      _evaluations_required_to_find_best_found_result;
     size_t                                      _valid_evaluations_required_to_find_best_found_result;
-    using                                        history_entry = std::tuple< std::chrono::high_resolution_clock::time_point, configuration, cost_t >; // entry: actual tuning runtime, configuration, configuration's cost
+    using                                        history_entry = std::tuple< std::chrono::steady_clock::time_point, configuration, cost_t >; // entry: actual tuning runtime, configuration, configuration's cost
     std::vector<history_entry>                  _history; // history of best results
 };
 

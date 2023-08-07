@@ -216,7 +216,7 @@ class duration : public abort_condition
   
     bool stop( const tuning_status& status )
     {
-      auto current_tuning_time = std::chrono::high_resolution_clock::now() - status.tuning_start_time();
+      auto current_tuning_time = std::chrono::steady_clock::now() - status.tuning_start_time();
       return current_tuning_time > _duration;
     }
   private:

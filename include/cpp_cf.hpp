@@ -12,11 +12,11 @@ auto cpp( Ts&&... args ) {
     return [&](atf::configuration &config) -> cost_t {
         auto tunable = T(config);
 
-        auto start = std::chrono::high_resolution_clock::now();
+        auto start = std::chrono::steady_clock::now();
 
         tunable( args... );
 
-        auto end = std::chrono::high_resolution_clock::now();
+        auto end = std::chrono::steady_clock::now();
         auto cost = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
 
         return static_cast<cost_t>(cost);

@@ -86,4 +86,4 @@ Tuner
 
   .. cpp:function:: size_t valid_evaluations_required_to_find_best_found_result()
 
-  .. cpp:function:: std::chrono::high_resolution_clock::time_point tuning_start_time()
+  .. cpp:function:: std::chrono::steady_clock::time_point tuning_start_time()

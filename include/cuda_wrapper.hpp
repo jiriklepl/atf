@@ -383,7 +383,7 @@ class cuda_wrapper
     template< typename T, typename... ARGs >
     void create_buffers_and_set_args_impl( data::buffer_class<T>& buffer, ARGs&... args )
     {
-      auto start_time = std::chrono::system_clock::now();
+      auto start_time = std::chrono::steady_clock::now();
 
       m_KernelBufferSizes.emplace_back(buffer.size());
 
@@ -392,7 +392,7 @@ class cuda_wrapper
 
       cuda_safe_call<>(cuMemAlloc(&ptr, buffer.size() * sizeof(T)), "Failed to allocate buffer");
 
-      auto end_time = std::chrono::system_clock::now();
+      auto end_time = std::chrono::steady_clock::now();
       auto runtime  = std::chrono::duration_cast<std::chrono::milliseconds>( end_time - start_time ).count();
       std::cout << "Time to create CUDA device buffer: " << runtime << "ms" << std::endl;
 
@@ -423,13 +423,13 @@ class cuda_wrapper
     void fill_buffers_impl( bool init, data::buffer_class<T>& buffer, ARGs&... args )
     {
       if (buffer.copy_once() == init) {
-        auto start_time = std::chrono::system_clock::now();
+        auto start_time = std::chrono::steady_clock::now();
 
         auto& ptr = m_KernelBuffers[buffer_pos];
 
         cuda_safe_call<>(cuMemcpyHtoD(ptr, buffer.get(), buffer.size() * sizeof(T)), "Failed to copy buffer data to device");
 
-        auto end_time = std::chrono::system_clock::now();
+        auto end_time = std::chrono::steady_clock::now();
         auto runtime  = std::chrono::duration_cast<std::chrono::milliseconds>( end_time - start_time ).count();
         if (init)
           std::cout << "Time to fill CUDA device buffer: " << runtime << "ms" << std::endl;

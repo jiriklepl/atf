@@ -64,7 +64,7 @@ public:
       _copy_search_technique = []() -> search_technique* { return NULL; };
       _search_technique_1d = NULL;
       _copy_search_technique_1d = []() -> search_technique_1d* { return NULL; };
-      _status._history.emplace_back( std::chrono::high_resolution_clock::now(),
+      _status._history.emplace_back( std::chrono::steady_clock::now(),
                                      configuration{},
                                      std::numeric_limits<size_t>::max()
                                    );

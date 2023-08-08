@@ -96,6 +96,21 @@ auto tuning_parameter(const std::string& name, const std::initializer_list<T>& e
 {
   return tp_t<T,set<T>,callable>( name, set< typename std::remove_reference<T>::type >( elems ), predicate );
 }
+
+
+
+// enables vectors in tp definition
+template< typename T >
+auto tuning_parameter(const std::string& name, const std::vector<T>& elems )
+{
+  return tuning_parameter(name, elems, [](T) { return true; });
+}
+
+template< typename T, typename callable >
+auto tuning_parameter(const std::string& name, const std::vector<T>& elems, const callable& predicate )
+{
+  return tp_t<T,set<T>,callable>( name, set< typename std::remove_reference<T>::type >( elems ), predicate );
+}
  
 
 // function for deducing class template parameters of "tp_t"

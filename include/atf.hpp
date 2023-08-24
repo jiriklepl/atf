@@ -1,39 +1,40 @@
 #ifndef atf_h
 #define atf_h
 
-#include "include/abort_conditions.hpp"
-#include "include/range.hpp"
-#include "include/tp.hpp"
+#include "atf/abort_conditions.hpp"
+#include "atf/range.hpp"
+#include "atf/tp.hpp"
 
-#include "include/operators.hpp"
-#include "include/predicates.hpp"
+#include "atf/operators.hpp"
+#include "atf/predicates.hpp"
 
-#include "include/exhaustive.hpp"
-#include "include/simulated_annealing.hpp"
-#include "include/random_search.hpp"
-#include "include/differential_evolution.hpp"
-#include "include/particle_swarm.hpp"
-#include "include/pattern_search.hpp"
-#include "include/torczon.hpp"
+#include "atf/exhaustive.hpp"
+#include "atf/simulated_annealing.hpp"
+#include "atf/random_search.hpp"
+#include "atf/differential_evolution.hpp"
+#include "atf/particle_swarm.hpp"
+#include "atf/pattern_search.hpp"
+#include "atf/torczon.hpp"
 #ifdef ENABLE_OPEN_TUNER_SEARCH_TECHNIQUE
-#include "include/open_tuner.hpp"
+#include "atf/open_tuner.hpp"
 #endif
 
-#include "include/auc_bandit.hpp"
-#include "include/round_robin.hpp"
+#include "atf/auc_bandit.hpp"
+#include "atf/round_robin.hpp"
 
-#include "include/exploration_engine.hpp"
+#include "atf/exploration_engine.hpp"
 
 #ifdef ENABLE_OPENCL_COST_FUNCTION
-#include "include/ocl_wrapper.hpp"
+#include "atf/ocl_wrapper.hpp"
 #endif
 #ifdef ENABLE_CUDA_COST_FUNCTION
-#include "include/cuda_wrapper.hpp"
+#include "atf/cuda_wrapper.hpp"
 #endif
-#include "include/cpp_cf.hpp"
-#include "include/bash_cf.hpp"
+#include "atf/cpp_cf.hpp"
+#include "atf/bash_cf.hpp"
 
 #include <cstdlib>
+#include <cstring>
 
 namespace atf {
 
@@ -329,7 +330,7 @@ class cost_function_class {
     }
 
     inline auto to_internal_type() {
-      return [=](configuration &configuration) {
+      return [=, *this](configuration &configuration) {
         // concat configuration values
         std::stringstream ss;
         for (auto &tp : configuration) {

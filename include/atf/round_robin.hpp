@@ -76,6 +76,8 @@ private:
     }
     std::set<coordinates> get_next_coordinates_impl(size_t index) {
         assert(false && "should never be reached");
+
+        return {};
     }
 
     template<size_t... Is>

@@ -1,6 +1,7 @@
 #ifndef bash_cf_h
 #define bash_cf_h
 
+#include <cstring>
 #include <string>
 #include <sstream>
 #include <fstream>
